@@ -2,9 +2,26 @@ import React, { useState } from 'react';
 import ModalItem from './Modal';
 import { Form, Input, Button } from 'antd';
 import { confirmPassword } from '../api/api';
+import {createUseStyles} from 'react-jss';
+
+const useStyles = createUseStyles({
+  btn: {
+    backgroundColor: '#218838',
+    color: 'white !important',
+    borderColor: '#218838',
+    '&:hover': {
+      backgroundColor: '#218838',
+      color: 'white !important',
+      borderColor: '#218838',
+      outline: 'none !important',
+    },
+  }
+})
 
 export default function Password({ modalOpen, setModalOpen, respondentId }) {
   const [error, setError] = useState(null);
+
+  const classes = useStyles();
 
 
   const onsubmit = async values => {
@@ -52,7 +69,7 @@ export default function Password({ modalOpen, setModalOpen, respondentId }) {
         <Form.Item className='flex justify-end'>
           <Button
             htmlType='submit'
-            className='bg-[#218838] rounded-md px-3.5 text-sm font-semibold text-white shadow-sm hover:bg-[#218838] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#218838]'
+            className={classes.btn}
           >
             Submit
           </Button>
