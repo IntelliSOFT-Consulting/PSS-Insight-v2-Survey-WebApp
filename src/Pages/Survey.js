@@ -15,15 +15,17 @@ import { getQuestions, saveResponse } from '../api/api';
 import {
   getProgress,
   groupQuestions,
+  populateResponse,
   transformSubmissions,
 } from '../lib/helpers';
 import Section from '../components/Section';
 import Notification from '../components/Notification';
+import Loading from '../components/Loading';
 
 export default function Survey() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(true);
-  const [modalOpen, setModalOpen] = useState(true);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [progress, setProgress] = useState(0);
   const [info, setInfo] = useState(null);
@@ -40,8 +42,12 @@ export default function Survey() {
       const data = await getQuestions(surveyId);
       setQuestions(groupQuestions(data?.questions));
       setInfo(data?.respondentDetails);
+      const responses = populateResponse(data?.responses);
+      form.setFieldsValue(responses);
+      setProgress(getProgress(responses));
     } catch (err) {
-      if (err.response.status === 500) {
+      console.log(err);
+      if (err?.response?.status === 500) {
         navigate('/404');
       }
       setError('Oops! Something went wrong');
@@ -54,7 +60,7 @@ export default function Survey() {
     }
   }, [modalOpen]);
 
-  const onValuesChange = (changedValues, allValues) => {
+  const onValuesChange = (_, allValues) => {
     setProgress(getProgress(allValues));
   };
 
@@ -75,43 +81,51 @@ export default function Survey() {
     }
   };
 
+  console.log(form.getFieldsValue());
+
   return (
     <>
       {infoOpen && !modalOpen ? (
         <div className='bg-primary min-h-screen py-14 sm:py-22'>
-          <div className='mx-auto max-w-7xl px-6 lg:px-8'>
-            <h1 className='text-white font-extrabold text-3xl mt-2 sm:text-4xl'>
-              PSS INSIGHTS SURVEY
-            </h1>
-            <div className='bg-whiteTransparent p-4 rounded-md my-6'>
-              <h1 className='mt-2 text-xl font-bold tracking-tight text-primaryDark sm:text-2xl text-center'>
-                {info?.surveyName}
+          {info?.landingPage ? (
+            <div className='mx-auto max-w-7xl px-6 lg:px-8'>
+              <h1 className='text-white font-extrabold text-3xl mt-2 sm:text-4xl'>
+                PSS INSIGHTS SURVEY
               </h1>
-              <p className='mt-6 text-md leading-8'>{info?.landingPage}</p>
+              <div className='bg-whiteTransparent p-4 rounded-md my-6'>
+                <h1 className='mt-2 text-xl font-bold tracking-tight text-primaryDark sm:text-2xl text-center'>
+                  {info?.surveyName}
+                </h1>
+                <p className='mt-6 text-md leading-8'>{info?.landingPage}</p>
 
-              <div className='flex justify-center mt-6'>
-                {/* cancel button */}
-                <button
-                  className='bg-disabled rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-disabled focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-disabled mr-4'
-                  onClick={() => {
-                    // close the tab
-                    window.close();
-                  }}
-                >
-                  CANCEL
-                </button>
-                <button
-                  onClick={() => {
-                    setInfoOpen(false);
-                  }}
-                  className='bg-success rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-success focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success'
-                  disabled={!info}
-                >
-                  START SURVEY
-                </button>
+                <div className='flex justify-center mt-6'>
+                  {/* cancel button */}
+                  <button
+                    className='bg-disabled rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-disabled focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-disabled mr-4'
+                    onClick={() => {
+                      // close the tab
+                      window.close();
+                    }}
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    onClick={() => {
+                      setInfoOpen(false);
+                    }}
+                    className='bg-success rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-success focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success'
+                    disabled={!info}
+                  >
+                    START SURVEY
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className='absolute flex w-screen h-screen items-center justify-center transition-all ease-linear duration-300'>
+              <Loading />
+            </div>
+          )}
         </div>
       ) : (
         <div>

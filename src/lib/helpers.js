@@ -26,22 +26,24 @@ export const transformSubmissions = submissions => {
 };
 
 export const populateResponse = responses => {
-  const datas = responses.map(response => {
-    return response.responses.map(response => {
-      const object = {};
-      if (response.comment) {
-        object[`${response.indicator}_comment`] = response.comment;
-      }
-      if (response.attachment) {
-        object[`${response.indicator}_file`] = response.attachment;
-      }
-      if (response.response) {
-        object[response.indicator] = response.response;
-      }
-      return object;
-    });
+  const object = {};
+  responses?.forEach(response => {
+    if (response.comment) {
+      object[`${response.indicator}_comment`] = response.comment;
+    }
+    if (response.attachment) {
+      object[`${response.indicator}_file`] = response.attachment;
+    }
+    if (response.response) {
+      object[response.indicator] =
+        response.response == 'true'
+          ? true
+          : response.response == 'false'
+          ? false
+          : response.response;
+    }
   });
-  return datas;
+  return object;
 };
 
 export const loadData = data => {
@@ -58,8 +60,6 @@ export const loadData = data => {
   return { ...rest, ...transformedData };
 };
 
-// write a function that takes an object, get the keys, removes _comment and _file from the keys, removes duplicates, returns the percentage of the keys that have a value
-// write the most efficient code you can think of
 export const getProgress = data => {
   const keys = Object.keys(data);
   const filteredKeys = keys.filter(key => !key.match(/(_comment|_file)$/));

@@ -26,6 +26,7 @@ export default function InputField({
             type='number'
             disabled={disabled}
             defaultValue={defaultValue}
+            value={value}
             style={{ width: '100%' }}
             {...rest}
           />
@@ -44,6 +45,7 @@ export default function InputField({
           <Radio.Group 
           options={options}
           defaultValue={defaultValue}
+          value={value}
           {...rest}
           />
            
