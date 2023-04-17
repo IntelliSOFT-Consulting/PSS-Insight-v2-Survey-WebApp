@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ModalItem from './Modal';
 import { Form, Input, Button } from 'antd';
 import { confirmPassword } from '../api/api';
-import {createUseStyles} from 'react-jss';
+import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
   btn: {
@@ -15,14 +15,14 @@ const useStyles = createUseStyles({
       borderColor: '#218838',
       outline: 'none !important',
     },
-  }
-})
+  },
+});
 
 export default function Password({ modalOpen, setModalOpen, respondentId }) {
   const [error, setError] = useState(null);
+  const [noPaste, setNoPaste] = useState(null);
 
   const classes = useStyles();
-
 
   const onsubmit = async values => {
     try {
@@ -37,6 +37,14 @@ export default function Password({ modalOpen, setModalOpen, respondentId }) {
     } catch (error) {
       setError(error.response.data?.details);
     }
+  };
+
+  const handlePaste = e => {
+    e.preventDefault();
+    setNoPaste('Paste is not allowed');
+    setTimeout(() => {
+      setNoPaste(null);
+    }, 2000);
   };
 
   return (
@@ -64,13 +72,14 @@ export default function Password({ modalOpen, setModalOpen, respondentId }) {
             size='large'
             type='password'
             onChange={onchange}
+            onPaste={handlePaste}
           />
         </Form.Item>
+        {noPaste && (
+          <p className='text-red-500 text-sm'>{noPaste}</p>
+        )}
         <Form.Item className='flex justify-end'>
-          <Button
-            htmlType='submit'
-            className={classes.btn}
-          >
+          <Button htmlType='submit' className={classes.btn}>
             Submit
           </Button>
         </Form.Item>
