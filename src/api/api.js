@@ -1,11 +1,14 @@
 import axios from 'axios';
 
 // const api = axios.create({
-//   baseURL: `${process.env.REACT_APP_API_URL}/api/v1`,
+//   baseURL: `${process.env.REACT_APP_API_URL}`,
 // });
 
 export const confirmPassword = async datas => {
-  const { data } = await axios.post('/api/v1/survey-respondents/verify-password', datas);
+  const { data } = await axios.post(
+    '/api/v1/survey-respondents/verify-password',
+    datas
+  );
   return data;
 };
 
@@ -22,6 +25,17 @@ export const attachFile = async file => {
 };
 
 export const saveResponse = async datas => {
-  const { data } = await axios.post('/api/v1/survey-respondents/response/save', datas);
+  const { data } = await axios.post(
+    '/api/v1/survey-respondents/response/save',
+    datas
+  );
+  return data;
+};
+
+export const requestExpiryUpdate = async (respondentId, datas) => {
+  const { data } = await axios.post(
+    `/api/v1/survey-respondents/request-link/${respondentId}`,
+    datas
+  );
   return data;
 };
