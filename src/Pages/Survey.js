@@ -31,6 +31,7 @@ export default function Survey() {
   const [info, setInfo] = useState(null);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState(null);
+  const [requestSent, setRequestSent] = useState(false);
 
   const [form] = Form.useForm();
 
@@ -55,7 +56,7 @@ export default function Survey() {
   };
 
   useEffect(() => {
-    if (!modalOpen) {
+    if (!modalOpen && !requestSent) {
       fetchQuestions();
     }
   }, [modalOpen]);
@@ -81,10 +82,12 @@ export default function Survey() {
     }
   };
 
-  console.log(form.getFieldsValue());
-
   return (
     <>
+      {requestSent && (
+        <Notification message='Request sent successfully' status='success' />
+      )}
+
       {infoOpen && !modalOpen ? (
         <div className='bg-primary min-h-screen py-14 sm:py-22'>
           {info?.landingPage ? (
@@ -123,7 +126,7 @@ export default function Survey() {
             </div>
           ) : (
             <div className='absolute flex w-screen h-screen items-center justify-center transition-all ease-linear duration-300'>
-              <Loading />
+              {!requestSent && <Loading />}
             </div>
           )}
         </div>
@@ -393,6 +396,7 @@ export default function Survey() {
         modalOpen={modalOpen}
         setModalOpen={setModalOpen}
         respondentId={surveyId}
+        setRequestSent={setRequestSent}
       />
     </>
   );
