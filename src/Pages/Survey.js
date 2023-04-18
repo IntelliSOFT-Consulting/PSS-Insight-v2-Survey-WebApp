@@ -32,6 +32,7 @@ export default function Survey() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState(null);
   const [requestSent, setRequestSent] = useState(false);
+  const [resent, setResent] = useState([]);
 
   const [form] = Form.useForm();
 
@@ -41,6 +42,7 @@ export default function Survey() {
   const fetchQuestions = async () => {
     try {
       const data = await getQuestions(surveyId);
+      setResent(data?.resentQuestions);
       setQuestions(groupQuestions(data?.questions));
       setInfo(data?.respondentDetails);
       const responses = populateResponse(data?.responses);
@@ -347,7 +349,14 @@ export default function Survey() {
                           onFinish={submitSurvey}
                         >
                           {questions?.map((category, index) => (
-                            <Section title={category.indicatorName} key={index}>
+                            <Section
+                              hide={
+                                resent?.length &&
+                                !resent?.includes(category.categoryId)
+                              }
+                              title={category.indicatorName}
+                              key={index}
+                            >
                               {category.indicatorDataValue?.map(
                                 (indicator, index) => (
                                   <Card

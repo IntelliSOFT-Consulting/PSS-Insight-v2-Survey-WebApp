@@ -10,11 +10,9 @@ import { Collapse, Input, Button, Upload } from 'antd';
 
 const { Panel } = Collapse;
 
-export default function Section({ title, moreInfo = 'test', children }) {
- 
-
+export default function Section({ title, hide, moreInfo = 'test', children }) {
   return (
-    <div className='bg-white shadow overflow-hidden rounded mb-10'>
+    <div className={`bg-white shadow overflow-hidden rounded mb-10 ${hide ? 'hidden':null}`}>
       <div className='flex justify-between border-b border-gray-200 bg-[#0067B9] px-4 py-5 sm:px-6'>
         {title && (
           <h3 className='text-base font-semibold leading-6 text-white'>
