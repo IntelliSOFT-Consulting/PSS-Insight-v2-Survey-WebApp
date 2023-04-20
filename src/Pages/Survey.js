@@ -368,12 +368,6 @@ export default function Survey() {
                                     <Form.Item
                                       label={indicator.name}
                                       name={indicator.id}
-                                      rules={[
-                                        {
-                                          required: true,
-                                          message: 'This field is required',
-                                        },
-                                      ]}
                                     >
                                       <InputField
                                         label={indicator.name}
