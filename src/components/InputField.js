@@ -17,6 +17,11 @@ export default function InputField({
     { label: 'No', value: false },
   ];
 
+  const handleWheel = e => {
+    console.log(e);
+    e.preventDefault();
+  };
+
   const renderInput = () => {
     switch (type) {
       case 'NUMBER':
@@ -42,13 +47,12 @@ export default function InputField({
         );
       case 'BOOLEAN':
         return (
-          <Radio.Group 
-          options={options}
-          defaultValue={defaultValue}
-          value={value}
-          {...rest}
+          <Radio.Group
+            options={options}
+            defaultValue={defaultValue}
+            value={value}
+            {...rest}
           />
-           
         );
       case 'STRING':
         return (

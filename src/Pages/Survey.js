@@ -21,6 +21,9 @@ import {
 import Section from '../components/Section';
 import Notification from '../components/Notification';
 import Loading from '../components/Loading';
+import InfoModal from '../components/InfoModal';
+import { format } from 'date-fns';
+import Countdown from '../components/Countdown';
 
 export default function Survey() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -33,6 +36,7 @@ export default function Survey() {
   const [error, setError] = useState(null);
   const [requestSent, setRequestSent] = useState(false);
   const [resent, setResent] = useState([]);
+  const [indicatorInfo, setIndicatorInfo] = useState(null);
 
   const [form] = Form.useForm();
 
@@ -138,9 +142,8 @@ export default function Survey() {
             <>
               <Notification
                 status={error ? 'error' : saved ? 'success' : null}
-                message={saved}
+                message={error || saved}
                 onClose={() => setError(null)}
-                key={error ? 'error' : saved ? 'success' : 'notification'}
               />
               <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
@@ -204,13 +207,25 @@ export default function Survey() {
                               strokeColor='#0D8E0D'
                             />
                             <p className='py-8 text-sm'>
-                              Form expires in: <b>1hr: 30mins: 20secs</b>
+                              Form expires in:{' '}
+                              <b>
+                                {info?.expiresAt && (
+                                  <Countdown
+                                    expiryDate={new Date(info?.expiresAt)}
+                                  />
+                                )}
+                              </b>
                             </p>
                             <div className='flex flex-col w-full text-sm px-2'>
-                              <button className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 px-4 w-full flex justify-center rounded text-primaryDark'>
+                              <a
+                                href={`${process.env.REACT_APP_REFERENCE_URL}/api/v1/national-template/view-file/${info?.referenceSheet}`}
+                                target='_blank'
+                                rel='noreferrer'
+                                className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 px-4 w-full flex justify-center rounded text-primaryDark'
+                              >
                                 <PaperClipIcon className='h-4 w-4 mr-2' />
                                 Reference Sheet
-                              </button>
+                              </a>
                               <button className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 mt-1 px-4 w-full flex justify-center rounded text-primaryDark'>
                                 <EnvelopeIcon className='h-4 w-4 mr-2' />
                                 admin@pss.com
@@ -233,7 +248,7 @@ export default function Survey() {
                                     form.submit();
                                   }}
                                 >
-                                  <span class='material-symbols-outlined'>
+                                  <span className='material-symbols-outlined'>
                                     send
                                   </span>
                                   {/* <PaperAirplaneIcon className='h-4 w-4 mr-1' /> */}
@@ -257,11 +272,7 @@ export default function Survey() {
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className='flex flex-grow flex-col overflow-y-auto ring-1 ring-gray-300 pt-5'>
                   <div className='flex flex-shrink-0 items-center px-4'>
-                    <img
-                      className='h-8 w-auto'
-                      src='https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=300'
-                      alt='Your Company'
-                    />
+                    <img className='h-8 w-auto' alt='Your Company' />
                   </div>
                   <div className='mt-5 flex flex-1 flex-col'>
                     <nav className='flex-1 flex space-y-1  pb-4 items-center mt-14 flex-col'>
@@ -274,13 +285,23 @@ export default function Survey() {
                         format={percent => `${percent}%`}
                       />
                       <p className='py-8 text-sm'>
-                        Form expires in: <b>1hr: 30mins: 20secs</b>
+                        Form expires in:{' '}
+                        <b>
+                          {info?.expiresAt && (
+                            <Countdown expiryDate={new Date(info?.expiresAt)} />
+                          )}
+                        </b>
                       </p>
                       <div className='flex flex-col w-full text-sm px-2'>
-                        <button className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 px-4 w-full flex justify-center rounded text-primaryDark'>
+                        <a
+                          href={`${process.env.REACT_APP_REFERENCE_URL}/api/v1/national-template/view-file/${info?.referenceSheet}`}
+                          target='_blank'
+                          rel='noreferrer'
+                          className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 px-4 w-full flex justify-center rounded text-primaryDark'
+                        >
                           <PaperClipIcon className='h-4 w-4 mr-2' />
                           Reference Sheet
-                        </button>
+                        </a>
                         <button className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 mt-1 px-4 w-full flex justify-center rounded text-primaryDark'>
                           <EnvelopeIcon className='h-4 w-4 mr-2' />
                           admin@pss.com
@@ -293,7 +314,7 @@ export default function Survey() {
                               form.submit();
                             }}
                           >
-                            <span class='material-symbols-outlined text-sm mr-1'>
+                            <span className='material-symbols-outlined text-sm mr-1'>
                               save
                             </span>
                             {/* <BookmarkSquareIcon className='h-4 w-4 mr-1' /> */}
@@ -307,7 +328,7 @@ export default function Survey() {
                             }}
                           >
                             {/* <PaperAirplaneIcon className='h-4 w-4 mr-1' /> */}
-                            <span class='material-symbols-outlined -rotate-45 text-sm mr-1'>
+                            <span className='material-symbols-outlined -rotate-45 text-sm mr-1'>
                               send
                             </span>
                             Submit Survey
@@ -355,6 +376,12 @@ export default function Survey() {
                                 !resent?.includes(category.categoryId)
                               }
                               title={category.indicatorName}
+                              indicator={{
+                                // name: category.indicatorName,
+                                categoryName: category.categoryName,
+                                description: category.description,
+                              }}
+                              setIndicatorInfo={setIndicatorInfo}
                               key={index}
                             >
                               {category.indicatorDataValue?.map(
@@ -395,6 +422,15 @@ export default function Survey() {
           )}
         </div>
       )}
+      <InfoModal
+        open={indicatorInfo}
+        setOpen={setIndicatorInfo}
+        title={indicatorInfo?.categoryName || 'DEFINITION'}
+        onCancel={() => setIndicatorInfo(null)}
+        footer={null}
+        type='info'
+      />
+
       <Password
         modalOpen={modalOpen}
         setModalOpen={setModalOpen}

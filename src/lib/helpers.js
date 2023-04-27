@@ -17,7 +17,7 @@ export const transformSubmissions = submissions => {
   const responseArray = uniqueKeys.map(key => {
     return {
       indicatorId: key,
-      answer: responses[key],
+      answer: responses[key] || '',
       comments: responses[`${key}_comment`],
       attachment: responses[`${key}_file`],
     };
@@ -36,11 +36,13 @@ export const populateResponse = responses => {
     }
     if (response.response) {
       object[response.indicator] =
-        response.response == 'true'
+        response.response === 'true'
           ? true
-          : response.response == 'false'
+          : response.response === 'false'
           ? false
           : response.response;
+    } else {
+      object[response.indicator] = '';
     }
   });
   return object;
