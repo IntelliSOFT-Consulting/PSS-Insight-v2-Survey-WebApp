@@ -19,8 +19,8 @@ export const getQuestions = async respondentId => {
   return data;
 };
 
-export const attachFile = async file => {
-  const { data } = await axios.post('/file/upload', file);
+export const attachFile = async (file, config) => {
+  const { data } = await axios.post('/api/v1/file/upload', file, config);
   return data;
 };
 

@@ -11,15 +11,25 @@ import { attachFile } from '../api/api';
 const { Panel } = Collapse;
 
 export default function Card({ Form, form, children, id }) {
-  const handleUpload = async info => {
+  const handleFileUpload = async ({ file, onSuccess, onError, onProgress }) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const config = {
+      headers: { 'content-type': 'multipart/form-data' },
+      onUploadProgress: event => {
+        const percent = (event.loaded / event.total) * 100;
+        onProgress({ percent });
+      },
+    };
+
     try {
-      const file = info.fileList[0].originFileObj;
-      const formData = new FormData();
-      formData.append('file', file);
-      const response = await attachFile(formData);
+      const response = await attachFile(formData, config);
       form.setFieldValue(`${id}_file`, response.id);
+      onSuccess('Ok');
     } catch (error) {
       console.log(error);
+      onError('Error');
     }
   };
 
@@ -68,8 +78,7 @@ export default function Card({ Form, form, children, id }) {
                         <XCircleIcon className='h-5 w-5 text-primaryDark' />
                       ),
                     }}
-                    beforeUpload={() => false}
-                    onChange={handleUpload}
+                    customRequest={handleFileUpload}
                     listType='picture'
                   >
                     <Button

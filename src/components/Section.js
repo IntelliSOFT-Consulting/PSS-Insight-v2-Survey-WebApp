@@ -1,18 +1,20 @@
 import React from 'react';
-import {
-  ExclamationCircleIcon,
-  ChatBubbleLeftEllipsisIcon,
-  DocumentPlusIcon,
-  XCircleIcon,
-} from '@heroicons/react/24/solid';
-import { UploadOutlined } from '@ant-design/icons';
-import { Collapse, Input, Button, Upload } from 'antd';
+import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
+import { Collapse } from 'antd';
 
-const { Panel } = Collapse;
-
-export default function Section({ title, hide, moreInfo = 'test', children, ...props }) {
+export default function Section({
+  title,
+  hide,
+  moreInfo = 'test',
+  children,
+  ...props
+}) {
   return (
-    <div className={`bg-white shadow overflow-hidden rounded mb-10 ${hide ? 'hidden':null}`}>
+    <div
+      className={`bg-white shadow overflow-hidden rounded mb-10 ${
+        hide ? 'hidden' : null
+      }`}
+    >
       <div className='flex justify-between border-b border-gray-200 bg-[#0067B9] px-4 py-5 sm:px-6'>
         {title && (
           <h3 className='text-base font-semibold leading-6 text-white'>
@@ -22,9 +24,10 @@ export default function Section({ title, hide, moreInfo = 'test', children, ...p
 
         {moreInfo && (
           <div className='flex items-center cursor-pointer'>
-            <ExclamationCircleIcon className='h-5 w-5 text-white'
+            <ExclamationCircleIcon
+              className='h-5 w-5 text-white'
               onClick={() => props.setIndicatorInfo(props.indicator)}
-             />
+            />
           </div>
         )}
       </div>

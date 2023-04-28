@@ -8,7 +8,7 @@ import {
 } from '@heroicons/react/20/solid';
 import { Form, Progress, Input, Radio } from 'antd';
 import Card from '../components/Card';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Password from '../components/Password';
 import InputField from '../components/InputField';
 import { getQuestions, saveResponse } from '../api/api';
@@ -22,7 +22,6 @@ import Section from '../components/Section';
 import Notification from '../components/Notification';
 import Loading from '../components/Loading';
 import InfoModal from '../components/InfoModal';
-import { format } from 'date-fns';
 import Countdown from '../components/Countdown';
 
 export default function Survey() {
@@ -377,7 +376,6 @@ export default function Survey() {
                               }
                               title={category.indicatorName}
                               indicator={{
-                                // name: category.indicatorName,
                                 categoryName: category.categoryName,
                                 description: category.description,
                               }}
