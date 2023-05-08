@@ -64,8 +64,8 @@ const useStyles = createUseStyles({
 
 export default function Survey() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(true);
   const [questions, setQuestions] = useState([]);
   const [progress, setProgress] = useState(0);
   const [info, setInfo] = useState(null);
