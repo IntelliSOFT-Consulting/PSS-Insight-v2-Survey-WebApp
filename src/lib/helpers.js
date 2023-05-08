@@ -62,15 +62,15 @@ export const loadData = data => {
   return { ...rest, ...transformedData };
 };
 
-export const getProgress = data => {
+export const getProgress = (data, total) => {
   const keys = Object.keys(data);
-  const filteredKeys = keys.filter(key => !key.match(/(_comment|_file)$/));
+  const filteredKeys = keys.filter(key => !key.match(/(_comment|_file|isSubmit)$/));
   const uniqueKeys = [...new Set(filteredKeys)];
 
   const filled = uniqueKeys
-    .map(key => data[key]?.toString())
-    ?.filter(value => value);
-
-  const percentage = (filled.length / (uniqueKeys.length - 1)) * 100;
+  .map(key => data[key]?.toString())
+  ?.filter(value => value);
+  
+  const percentage = (filled.length / total) * 100;
   return Math.round(percentage);
 };

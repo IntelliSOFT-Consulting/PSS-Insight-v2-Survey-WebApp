@@ -1,12 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Bars3BottomLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import {
-  PaperClipIcon,
-  BookmarkSquareIcon,
-  EnvelopeIcon,
-} from '@heroicons/react/20/solid';
-import { Form, Progress, Input, Radio } from 'antd';
+import { Form, Input, Checkbox } from 'antd';
 import Card from '../components/Card';
 import { useNavigate } from 'react-router-dom';
 import Password from '../components/Password';
@@ -22,12 +17,55 @@ import Section from '../components/Section';
 import Notification from '../components/Notification';
 import Loading from '../components/Loading';
 import InfoModal from '../components/InfoModal';
-import Countdown from '../components/Countdown';
+import { divideIndicatorQuestions } from '../lib/surveyController';
+import CardInline from '../components/CardInline';
+import { createUseStyles } from 'react-jss';
+import SideBar from '../components/SideBar';
+
+const useStyles = createUseStyles({
+  checkbox: {
+    '& span': {
+      fontWeight: '500 !important',
+    },
+    '& .ant-checkbox-checked': {
+      '& .ant-checkbox-inner': {
+        backgroundColor: 'white !important',
+        borderColor: '#064972 !important',
+        position: 'relative',
+        borderRadius: '2px',
+        display: 'flex !important',
+        justifyContent: 'center',
+        alignItems: 'center',
+        '&:after': {
+          content: '""',
+          width: '12px',
+          height: '12px',
+          backgroundColor: '#064972 !important',
+          transform: 'initial !important',
+          position: 'relative !important',
+          top: '0px !important',
+          insetInlineStart: '0px !important',
+          border: 'none !important',
+          transition: 'all 0.3s ease-in-out !important',
+        },
+      },
+    },
+    '&:hover': {
+      '& .ant-checkbox-checked': {
+        '& .ant-checkbox-inner': {
+          '&:after': {
+            border: 'none !important',
+          },
+        },
+      },
+    },
+  },
+});
 
 export default function Survey() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(true);
-  const [modalOpen, setModalOpen] = useState(true);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [progress, setProgress] = useState(0);
   const [info, setInfo] = useState(null);
@@ -36,8 +74,11 @@ export default function Survey() {
   const [requestSent, setRequestSent] = useState(false);
   const [resent, setResent] = useState([]);
   const [indicatorInfo, setIndicatorInfo] = useState(null);
+  const [indicatorQuestions, setIndicatorQuestions] = useState([]);
+  const [totalQuestions, setTotalQuestions] = useState(0);
 
   const [form] = Form.useForm();
+  const classes = useStyles();
 
   const surveyId = new URLSearchParams(window.location.search).get('id');
   const navigate = useNavigate();
@@ -50,15 +91,33 @@ export default function Survey() {
       setInfo(data?.respondentDetails);
       const responses = populateResponse(data?.responses);
       form.setFieldsValue(responses);
-      setProgress(getProgress(responses));
+      // setProgress(getProgress(responses));
     } catch (err) {
-      console.log(err);
       if (err?.response?.status === 500) {
         navigate('/404');
       }
       setError('Oops! Something went wrong');
     }
   };
+
+  // Write a function that takes questions array and checks if indicatorQuestions has any value that matches questions[category].categoryId. If it does, that category value is 1, alse category value is questions[category].categorDataValue.length -1
+  // return the total number of questions in the survey
+
+  const countIndicatorQuestions = () => {
+    const count = questions.map(category => {
+      if (indicatorQuestions?.includes(category.categoryId)) {
+        return 1;
+      }
+      return category?.indicatorDataValue?.length - 1;
+    });
+
+    const total = count.reduce((a, b) => a + b, 0);
+    setProgress(getProgress(form.getFieldsValue(), total));
+  };
+
+  useEffect(() => {
+    countIndicatorQuestions();
+  }, [indicatorQuestions, questions]);
 
   useEffect(() => {
     if (!modalOpen && !requestSent) {
@@ -67,7 +126,7 @@ export default function Survey() {
   }, [modalOpen]);
 
   const onValuesChange = (_, allValues) => {
-    setProgress(getProgress(allValues));
+    countIndicatorQuestions();
   };
 
   const submitSurvey = async values => {
@@ -142,7 +201,13 @@ export default function Survey() {
               <Notification
                 status={error ? 'error' : saved ? 'success' : null}
                 message={error || saved}
-                onClose={() => setError(null)}
+                onClose={() => {
+                  setError(null);
+                  if (!form.getFieldValue('isSubmit') && saved) {
+                    return setSaved(null);
+                  }
+                }}
+                darkened={form.getFieldValue('isSubmit')}
               />
               <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
@@ -198,64 +263,11 @@ export default function Survey() {
                         </Transition.Child>
 
                         <div className='mt-5 h-0 flex-1 overflow-y-auto'>
-                          <nav className='space-y-1 px-2 flex flex-col items-center'>
-                            <h1 className='my-4 font-bold'>YOUR PROGRESS</h1>
-                            <Progress
-                              type='circle'
-                              percent={progress}
-                              strokeColor='#0D8E0D'
-                            />
-                            <p className='py-8 text-sm'>
-                              Form expires in:{' '}
-                              <b>
-                                {info?.expiresAt && (
-                                  <Countdown
-                                    expiryDate={new Date(info?.expiresAt)}
-                                  />
-                                )}
-                              </b>
-                            </p>
-                            <div className='flex flex-col w-full text-sm px-2'>
-                              <a
-                                href={`${process.env.REACT_APP_REFERENCE_URL}/api/v1/national-template/view-file/${info?.referenceSheet}`}
-                                target='_blank'
-                                rel='noreferrer'
-                                className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 px-4 w-full flex justify-center rounded text-primaryDark'
-                              >
-                                <PaperClipIcon className='h-4 w-4 mr-2' />
-                                Reference Sheet
-                              </a>
-                              <button className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 mt-1 px-4 w-full flex justify-center rounded text-primaryDark'>
-                                <EnvelopeIcon className='h-4 w-4 mr-2' />
-                                admin@pss.com
-                              </button>
-                              <div className='flex justify-betweween mt-4'>
-                                <button
-                                  className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-1 w-full flex pl-2 rounded mr-4 items-center text-sm text-primaryDark'
-                                  onClick={() => {
-                                    form.setFieldValue('isSubmit', false);
-                                    form.submit();
-                                  }}
-                                >
-                                  <BookmarkSquareIcon className='h-4 w-4 mr-1' />
-                                  Save Draft
-                                </button>
-                                <button
-                                  className='bg-[#218838] hover:bg-[#218838] text-white py-1 w-full flex pl-2 rounded items-center text-sm'
-                                  onClick={() => {
-                                    form.setFieldValue('isSubmit', true);
-                                    form.submit();
-                                  }}
-                                >
-                                  <span className='material-symbols-outlined'>
-                                    send
-                                  </span>
-                                  {/* <PaperAirplaneIcon className='h-4 w-4 mr-1' /> */}
-                                  Submit Survey
-                                </button>
-                              </div>
-                            </div>
-                          </nav>
+                          <SideBar
+                            progress={progress}
+                            info={info}
+                            form={form}
+                          />
                         </div>
                       </Dialog.Panel>
                     </Transition.Child>
@@ -270,71 +282,8 @@ export default function Survey() {
               <div className='hidden lg:fixed lg:inset-y-0 lg:flex lg:w-80 lg:flex-col'>
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className='flex flex-grow flex-col overflow-y-auto ring-1 ring-gray-300 pt-5'>
-                  <div className='flex flex-shrink-0 items-center px-4'>
-                    <img className='h-8 w-auto' alt='Your Company' />
-                  </div>
                   <div className='mt-5 flex flex-1 flex-col'>
-                    <nav className='flex-1 flex space-y-1  pb-4 items-center mt-14 flex-col'>
-                      <h1 className='my-4 font-bold'>YOUR PROGRESS</h1>
-                      <Progress
-                        type='circle'
-                        percent={progress}
-                        strokeColor='#0D8E0D'
-                        strokeWidth={10}
-                        format={percent => `${percent}%`}
-                      />
-                      <p className='py-8 text-sm'>
-                        Form expires in:{' '}
-                        <b>
-                          {info?.expiresAt && (
-                            <Countdown expiryDate={new Date(info?.expiresAt)} />
-                          )}
-                        </b>
-                      </p>
-                      <div className='flex flex-col w-full text-sm px-2'>
-                        <a
-                          href={`${process.env.REACT_APP_REFERENCE_URL}/api/v1/national-template/view-file/${info?.referenceSheet}`}
-                          target='_blank'
-                          rel='noreferrer'
-                          className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 px-4 w-full flex justify-center rounded text-primaryDark'
-                        >
-                          <PaperClipIcon className='h-4 w-4 mr-2' />
-                          Reference Sheet
-                        </a>
-                        <button className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 mt-1 px-4 w-full flex justify-center rounded text-primaryDark'>
-                          <EnvelopeIcon className='h-4 w-4 mr-2' />
-                          admin@pss.com
-                        </button>
-                        <div className='flex justify-betweween mt-4'>
-                          <button
-                            className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-1 w-full flex pl-2 rounded mr-4 items-center text-sm text-primaryDark justify-center'
-                            onClick={() => {
-                              form.setFieldValue('isSubmit', false);
-                              form.submit();
-                            }}
-                          >
-                            <span className='material-symbols-outlined text-sm mr-1'>
-                              save
-                            </span>
-                            {/* <BookmarkSquareIcon className='h-4 w-4 mr-1' /> */}
-                            Save Draft
-                          </button>
-                          <button
-                            className='bg-[#218838] hover:bg-[#218838] text-white py-1 w-full flex pl-2 rounded items-center text-sm justify-center'
-                            onClick={() => {
-                              form.setFieldValue('isSubmit', true);
-                              form.submit();
-                            }}
-                          >
-                            {/* <PaperAirplaneIcon className='h-4 w-4 mr-1' /> */}
-                            <span className='material-symbols-outlined -rotate-45 text-sm mr-1'>
-                              send
-                            </span>
-                            Submit Survey
-                          </button>
-                        </div>
-                      </div>
-                    </nav>
+                    <SideBar progress={progress} info={info} form={form} />
                   </div>
                 </div>
               </div>
@@ -368,45 +317,168 @@ export default function Survey() {
                           onValuesChange={onValuesChange}
                           onFinish={submitSurvey}
                         >
-                          {questions?.map((category, index) => (
-                            <Section
-                              hide={
-                                resent?.length &&
-                                !resent?.includes(category.categoryId)
-                              }
-                              title={category.indicatorName}
-                              indicator={{
-                                categoryName: category.categoryName,
-                                description: category.description,
-                              }}
-                              setIndicatorInfo={setIndicatorInfo}
-                              key={index}
-                            >
-                              {category.indicatorDataValue?.map(
-                                (indicator, index) => (
-                                  <Card
-                                    key={index}
-                                    Form={Form}
-                                    form={form}
-                                    id={indicator.id}
-                                  >
-                                    <Form.Item
-                                      label={indicator.name}
-                                      name={indicator.id}
+                          {questions?.map((category, index) => {
+                            const formattedQuestions =
+                              divideIndicatorQuestions(category);
+
+                            return (
+                              <Section
+                                hide={
+                                  resent?.length &&
+                                  !resent?.includes(category.categoryId)
+                                }
+                                title={category.indicatorName}
+                                indicator={{
+                                  categoryName: category.categoryName,
+                                  description: category.description,
+                                  indicatorName: category.indicatorName,
+                                }}
+                                setIndicatorInfo={setIndicatorInfo}
+                                key={index}
+                              >
+                                {formattedQuestions?.map((indicator, index) => {
+                                  if (index === 0) {
+                                    return (
+                                      <CardInline
+                                        key={index}
+                                        Form={Form}
+                                        form={form}
+                                        id={indicator.id}
+                                        disabled={
+                                          !indicatorQuestions?.includes(
+                                            category.categoryId
+                                          )
+                                        }
+                                      >
+                                        <Form.Item
+                                          name={indicator.id}
+                                          rules={[
+                                            {
+                                              validator: (_, value) => {
+                                                if (
+                                                  value &&
+                                                  indicator.valueType ===
+                                                    'NUMBER'
+                                                ) {
+                                                  if (isNaN(value)) {
+                                                    return Promise.reject(
+                                                      'Please enter a number'
+                                                    );
+                                                  }
+                                                }
+                                                return Promise.resolve();
+                                              },
+                                            },
+                                          ]}
+                                        >
+                                          <InputField
+                                            label={indicator.name}
+                                            type={indicator.valueType}
+                                            size='large'
+                                            name={indicator.id}
+                                            placeholder={
+                                              indicator.valueType === 'NUMBER'
+                                                ? 'Enter Number'
+                                                : ''
+                                            }
+                                          />
+                                        </Form.Item>
+                                      </CardInline>
+                                    );
+                                  } else if (index === 1) {
+                                    return (
+                                      <div key={index} className='my-4 mx-6'>
+                                        <Checkbox
+                                          key={index}
+                                          name={indicator.id}
+                                          checked={
+                                            !indicatorQuestions?.includes(
+                                              category.categoryId
+                                            )
+                                          }
+                                          className={classes.checkbox}
+                                          onChange={e => {
+                                            if (e.target.checked) {
+                                              form.setFieldValue(
+                                                formattedQuestions[0].id,
+                                                ''
+                                              );
+                                              form.setFieldValue(
+                                                formattedQuestions[0].id +
+                                                  '_file',
+                                                ''
+                                              );
+                                              form.setFieldValue(
+                                                formattedQuestions[0].id +
+                                                  '_comment',
+                                                ''
+                                              );
+                                              setIndicatorQuestions(prev => {
+                                                return prev.filter(
+                                                  item =>
+                                                    item !== category.categoryId
+                                                );
+                                              });
+                                            } else {
+                                              setIndicatorQuestions(prev => {
+                                                return [
+                                                  ...prev,
+                                                  category.categoryId,
+                                                ];
+                                              });
+                                              const indicatorQuestions =
+                                                formattedQuestions.slice(2);
+                                              indicatorQuestions.forEach(
+                                                item => {
+                                                  form.setFieldValue(
+                                                    item.id,
+                                                    null
+                                                  );
+                                                  form.setFieldValue(
+                                                    item.id + '_file',
+                                                    null
+                                                  );
+                                                  form.setFieldValue(
+                                                    item.id + '_comment',
+                                                    null
+                                                  );
+                                                }
+                                              );
+                                            }
+                                          }}
+                                        >
+                                          {indicator.name}
+                                        </Checkbox>
+                                      </div>
+                                    );
+                                  }
+                                  return (
+                                    <Card
+                                      key={index}
+                                      Form={Form}
+                                      form={form}
+                                      id={indicator.id}
+                                      disabled={indicatorQuestions?.includes(
+                                        category.categoryId
+                                      )}
                                     >
-                                      <InputField
+                                      <Form.Item
                                         label={indicator.name}
-                                        type={indicator.valueType}
-                                        size='large'
                                         name={indicator.id}
-                                        required
-                                      />
-                                    </Form.Item>
-                                  </Card>
-                                )
-                              )}
-                            </Section>
-                          ))}
+                                      >
+                                        <InputField
+                                          label={indicator.name}
+                                          type={indicator.valueType}
+                                          size='large'
+                                          name={indicator.id}
+                                        />
+                                      </Form.Item>
+                                    </Card>
+                                  );
+                                })}
+                              </Section>
+                            );
+                          })}
                           <Form.Item name='isSubmit' hidden>
                             <Input />
                           </Form.Item>

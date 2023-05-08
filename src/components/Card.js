@@ -10,7 +10,7 @@ import { attachFile } from '../api/api';
 
 const { Panel } = Collapse;
 
-export default function Card({ Form, form, children, id }) {
+export default function Card({ Form, form, children, id, ...props }) {
   const handleFileUpload = async ({ file, onSuccess, onError, onProgress }) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -47,8 +47,12 @@ export default function Card({ Form, form, children, id }) {
   );
 
   return (
-    <div className='bg-white shadow overflow-hidden rounded mb-4'>
-      <div className='bg-white'>
+    <div
+      className={`shadow overflow-hidden rounded mb-4 mx-4 ${
+        props.disabled ? 'unclickable bg-gray-100' : 'bg-white'
+      }`}
+    >
+      <div className=''>
         <div className='px-4 py-5 sm:p-6'>{children}</div>
         <Collapse
           bordered={false}
@@ -63,6 +67,7 @@ export default function Card({ Form, form, children, id }) {
                       placeholder='Enter Comment'
                       rows={4}
                       className='w-full'
+                      autoComplete='off'
                     />
                   </Form.Item>
                 </div>

@@ -8,6 +8,16 @@
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
 }
 
+.unclickable * {
+  pointer-events: none;
+}
+
+.unclickable:hover {
+  cursor: not-allowed !important;
+}
+
+
+
 .ant-modal-content {
   border-radius: 0px !important;
   padding: 0px !important;

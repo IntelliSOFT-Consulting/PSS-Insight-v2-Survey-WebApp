@@ -7,7 +7,6 @@ module.exports = {
         primary: '#0067B9',
         primaryDark: '#002F6C',
         whiteTransparent: '#ffffffe1',
-        primaryDark: '#002F6C',
         success: '#218838',
         disabled: '#898989',
       },

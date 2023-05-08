@@ -25,7 +25,7 @@ const useStyles = createUseStyles({
   },
 });
 
-export default function Notification({ status, message, onClose }) {
+export default function Notification({ status, message, onClose, ...props }) {
   const classes = useStyles();
   return (
     <Modal
@@ -33,10 +33,10 @@ export default function Notification({ status, message, onClose }) {
       type={status}
       title={status === 'error' ? 'Error' : 'Success'}
       footer={null}
-      closable={status === 'error'}
+      closable={status === 'error' || !props.darkened }
       onCancel={onClose}
       maskStyle={{
-        backgroundColor: status === 'success' ? '#112128' : 'rgba(0,0,0,.5)',
+        backgroundColor: props.darkened ? '#112128' : 'rgba(0,0,0,.5)',
       }}
     >
       <div className={classes.modal}>

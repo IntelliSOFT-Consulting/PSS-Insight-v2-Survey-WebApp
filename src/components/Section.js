@@ -32,7 +32,7 @@ export default function Section({
         )}
       </div>
       <div className='bg-[#F4F4F4]'>
-        <div className='px-4 py-5 sm:p-6'>{children}</div>
+        <div className='pb-5 sm:pb-6'>{children}</div>
       </div>
     </div>
   );

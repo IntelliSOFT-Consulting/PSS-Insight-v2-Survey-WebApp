@@ -32,7 +32,7 @@ export default function InfoModal(props) {
   return (
     <Modal {...props} type='info'>
       <div classname={classes.infoModal}>
-        <div>{props.open?.description}</div>
+        <div>{props.open?.description || props.open?.indicatorName}</div>
       </div>
     </Modal>
   );

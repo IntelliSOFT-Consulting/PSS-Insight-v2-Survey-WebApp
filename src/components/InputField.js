@@ -17,18 +17,14 @@ export default function InputField({
     { label: 'No', value: false },
   ];
 
-  const handleWheel = e => {
-    console.log(e);
-    e.preventDefault();
-  };
-
   const renderInput = () => {
     switch (type) {
       case 'NUMBER':
         return (
-          <InputNumber
-            placeholder={placeholder}
-            type='number'
+          <Input
+            placeholder={placeholder || 'Enter Number'}
+            pattern='[0-9]*'
+            autoComplete='off'
             disabled={disabled}
             defaultValue={defaultValue}
             value={value}
@@ -42,6 +38,7 @@ export default function InputField({
             placeholder={placeholder}
             disabled={disabled}
             defaultValue={defaultValue}
+            autoComplete='off'
             {...rest}
           />
         );
@@ -54,9 +51,14 @@ export default function InputField({
             {...rest}
           />
         );
-      case 'STRING':
+      case 'TEXT':
         return (
-          <Input placeholder={placeholder} disabled={disabled} {...rest} />
+          <Input
+            autoComplete='off'
+            disabled={disabled}
+            placeholder={placeholder || 'Enter Text'}
+            {...rest}
+          />
         );
       default:
         return (
