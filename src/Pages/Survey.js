@@ -21,6 +21,7 @@ import { divideIndicatorQuestions } from '../lib/surveyController';
 import CardInline from '../components/CardInline';
 import { createUseStyles } from 'react-jss';
 import SideBar from '../components/SideBar';
+import background from '../assets/bg.svg';
 
 const useStyles = createUseStyles({
   checkbox: {
@@ -60,6 +61,12 @@ const useStyles = createUseStyles({
       },
     },
   },
+  background: {
+    backgroundImage: `url(${background})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
 });
 
 export default function Survey() {
@@ -75,7 +82,6 @@ export default function Survey() {
   const [resent, setResent] = useState([]);
   const [indicatorInfo, setIndicatorInfo] = useState(null);
   const [indicatorQuestions, setIndicatorQuestions] = useState([]);
-  const [totalQuestions, setTotalQuestions] = useState(0);
 
   const [form] = Form.useForm();
   const classes = useStyles();
@@ -91,7 +97,6 @@ export default function Survey() {
       setInfo(data?.respondentDetails);
       const responses = populateResponse(data?.responses);
       form.setFieldsValue(responses);
-      // setProgress(getProgress(responses));
     } catch (err) {
       if (err?.response?.status === 500) {
         navigate('/404');
@@ -99,9 +104,6 @@ export default function Survey() {
       setError('Oops! Something went wrong');
     }
   };
-
-  // Write a function that takes questions array and checks if indicatorQuestions has any value that matches questions[category].categoryId. If it does, that category value is 1, alse category value is questions[category].categorDataValue.length -1
-  // return the total number of questions in the survey
 
   const countIndicatorQuestions = () => {
     const count = questions.map(category => {
@@ -153,7 +155,7 @@ export default function Survey() {
       )}
 
       {infoOpen && !modalOpen ? (
-        <div className='bg-primary min-h-screen py-14 sm:py-22'>
+        <div className={`${classes.background} min-h-screen py-14 sm:py-22`}>
           {info?.landingPage ? (
             <div className='mx-auto max-w-7xl px-6 lg:px-8'>
               <h1 className='text-white font-extrabold text-3xl mt-2 sm:text-4xl'>

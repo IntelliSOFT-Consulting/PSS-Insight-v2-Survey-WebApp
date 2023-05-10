@@ -3,7 +3,7 @@ import Loading from '../components/Loading';
 
 export default function Home({ info, setInfoOpen }) {
   return (
-    <div className='bg-primary min-h-screen py-14 sm:py-22'>
+    <div className={`min-h-screen py-14 sm:py-22`}>
       {!info?.surveyName ? (
         <Loading />
       ) : (
