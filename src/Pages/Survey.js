@@ -345,7 +345,7 @@ export default function Survey() {
                                         key={index}
                                         Form={Form}
                                         form={form}
-                                        id={indicator.id}
+                                        id={indicator?.id}
                                         disabled={
                                           !indicatorQuestions?.includes(
                                             category.categoryId
@@ -353,13 +353,13 @@ export default function Survey() {
                                         }
                                       >
                                         <Form.Item
-                                          name={indicator.id}
+                                          name={indicator?.id}
                                           rules={[
                                             {
                                               validator: (_, value) => {
                                                 if (
                                                   value &&
-                                                  indicator.valueType ===
+                                                  indicator?.valueType ===
                                                     'NUMBER'
                                                 ) {
                                                   if (isNaN(value)) {
@@ -374,12 +374,12 @@ export default function Survey() {
                                           ]}
                                         >
                                           <InputField
-                                            label={indicator.name}
-                                            type={indicator.valueType}
+                                            label={indicator?.name}
+                                            type={indicator?.valueType}
                                             size='large'
-                                            name={indicator.id}
+                                            name={indicator?.id}
                                             placeholder={
-                                              indicator.valueType === 'NUMBER'
+                                              indicator?.valueType === 'NUMBER'
                                                 ? 'Enter Number'
                                                 : ''
                                             }
@@ -392,7 +392,7 @@ export default function Survey() {
                                       <div key={index} className='my-4 mx-6'>
                                         <Checkbox
                                           key={index}
-                                          name={indicator.id}
+                                          name={indicator?.id}
                                           checked={
                                             !indicatorQuestions?.includes(
                                               category.categoryId
@@ -449,7 +449,7 @@ export default function Survey() {
                                             }
                                           }}
                                         >
-                                          {indicator.name}
+                                          {indicator?.name}
                                         </Checkbox>
                                       </div>
                                     );
