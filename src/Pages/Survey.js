@@ -304,7 +304,7 @@ export default function Survey() {
                   </button>
                   <div className='flex flex-1 justify-between px-4 bg-primaryDark'>
                     <div className='flex flex-1 bg-primaryDark items-center text-white font-semibold'>
-                      <h1>Pharmaceutical System Strengthening V2.0</h1>
+                      <h1>PSS Insight</h1>
                     </div>
                   </div>
                 </div>
