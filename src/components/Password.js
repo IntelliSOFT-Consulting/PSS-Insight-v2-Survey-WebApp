@@ -18,10 +18,13 @@ const useStyles = createUseStyles({
   },
 });
 
-export default function Password({ modalOpen, setModalOpen, respondentId, setRequestSent }) {
+export default function Password({
+  modalOpen,
+  setModalOpen,
+  respondentId,
+  setRequestSent,
+}) {
   const [error, setError] = useState(null);
-  const [noPaste, setNoPaste] = useState(null);
- 
 
   const classes = useStyles();
 
@@ -37,7 +40,7 @@ export default function Password({ modalOpen, setModalOpen, respondentId, setReq
         }
       } else {
         confirmed = await confirmPassword({
-          password: values.password,
+          password: values.password?.trim(),
           respondentId,
         });
       }
@@ -46,17 +49,9 @@ export default function Password({ modalOpen, setModalOpen, respondentId, setReq
         setModalOpen(false);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       setError(error.response.data?.details);
     }
-  };
-
-  const handlePaste = e => {
-    e.preventDefault();
-    setNoPaste('Paste is not allowed');
-    setTimeout(() => {
-      setNoPaste(null);
-    }, 2000);
   };
 
   return (
@@ -89,11 +84,9 @@ export default function Password({ modalOpen, setModalOpen, respondentId, setReq
               size='large'
               type='password'
               onChange={onchange}
-              onPaste={handlePaste}
             />
           </Form.Item>
         )}
-        {noPaste && <p className='text-red-500 text-sm'>{noPaste}</p>}
 
         <Form.Item className='flex justify-end'>
           <Button htmlType='submit' className={classes.btn}>
