@@ -68,7 +68,7 @@ export const getProgress = (data, total) => {
   const uniqueKeys = [...new Set(filteredKeys)];
 
   const filled = uniqueKeys
-  .map(key => data[key]?.toString())
+  .map(key => data[key]?.toString() || data[`${key}_comment`]?.toString() || data[`${key}_file`]?.toString())
   ?.filter(value => value);
   
   const percentage = (filled.length / total) * 100;
