@@ -159,7 +159,7 @@ export default function Survey() {
           {info?.landingPage ? (
             <div className='mx-auto max-w-7xl px-6 lg:px-8'>
               <h1 className='text-white font-extrabold text-3xl mt-2 sm:text-4xl'>
-                PSS INSIGHTS SURVEY
+                PSS INSIGHT SURVEY
               </h1>
               <div className='bg-whiteTransparent p-4 rounded-md my-6'>
                 <h1 className='mt-2 text-xl font-bold tracking-tight text-primaryDark sm:text-2xl text-center'>
