@@ -92,6 +92,9 @@ export default function Survey() {
   const fetchQuestions = async () => {
     try {
       const data = await getQuestions(surveyId);
+      if (data?.respondentDetails?.status !== 'DRAFT') {
+        window.location.href = '/404';
+      }
       setResent(data?.resentQuestions);
       setQuestions(groupQuestions(data?.questions));
       setInfo(data?.respondentDetails);
