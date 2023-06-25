@@ -25,7 +25,7 @@ export default function Card({ Form, form, children, id, ...props }) {
 
     try {
       const response = await attachFile(formData, config);
-      form.setFieldValue(`${id}_file`, response.id);
+      form.setFieldValue(`${id}_file`, response?.id);
       onSuccess('Ok');
     } catch (error) {
       console.log(error);

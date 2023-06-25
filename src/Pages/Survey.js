@@ -92,7 +92,7 @@ export default function Survey() {
   const fetchQuestions = async () => {
     try {
       const data = await getQuestions(surveyId);
-      if (data?.respondentDetails?.status !== 'DRAFT') {
+      if (data?.respondentDetails?.status === 'PENDING') {
         window.location.href = '/404';
       }
       setResent(data?.resentQuestions);
@@ -405,17 +405,15 @@ export default function Survey() {
                                           onChange={e => {
                                             if (e.target.checked) {
                                               form.setFieldValue(
-                                                formattedQuestions[0].id,
+                                                formattedQuestions[0]?.id,
                                                 ''
                                               );
                                               form.setFieldValue(
-                                                formattedQuestions[0].id +
-                                                  '_file',
+                                                `${formattedQuestions[0]?.id}_file`,
                                                 ''
                                               );
                                               form.setFieldValue(
-                                                formattedQuestions[0].id +
-                                                  '_comment',
+                                                `${formattedQuestions[0]?.id}_comment`,
                                                 ''
                                               );
                                               setIndicatorQuestions(prev => {
@@ -436,15 +434,15 @@ export default function Survey() {
                                               indicatorQuestions.forEach(
                                                 item => {
                                                   form.setFieldValue(
-                                                    item.id,
+                                                    item?.id,
                                                     null
                                                   );
                                                   form.setFieldValue(
-                                                    item.id + '_file',
+                                                    item?.id + '_file',
                                                     null
                                                   );
                                                   form.setFieldValue(
-                                                    item.id + '_comment',
+                                                    item?.id + '_comment',
                                                     null
                                                   );
                                                 }
@@ -462,20 +460,20 @@ export default function Survey() {
                                       key={index}
                                       Form={Form}
                                       form={form}
-                                      id={indicator.id}
+                                      id={indicator?.id}
                                       disabled={indicatorQuestions?.includes(
                                         category.categoryId
                                       )}
                                     >
                                       <Form.Item
                                         label={indicator.name}
-                                        name={indicator.id}
+                                        name={indicator?.id}
                                       >
                                         <InputField
                                           label={indicator.name}
                                           type={indicator.valueType}
                                           size='large'
-                                          name={indicator.id}
+                                          name={indicator?.id}
                                         />
                                       </Form.Item>
                                     </Card>

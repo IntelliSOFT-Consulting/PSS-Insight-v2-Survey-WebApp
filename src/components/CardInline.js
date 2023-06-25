@@ -37,7 +37,7 @@ const CardInline = ({ Form, form, children, id, disabled }) => {
       };
 
       const response = await attachFile(formData, config);
-      form.setFieldValue(`${id}_file`, response.id);
+      form.setFieldValue(`${id}_file`, response?.id);
       onSuccess('Ok');
     } catch (error) {
       onError('Error');
