@@ -93,7 +93,7 @@ export default function Survey() {
     try {
       const data = await getQuestions(surveyId);
       if (data?.respondentDetails?.status === 'PENDING') {
-        window.location.href = '/404';
+        window.location.href = '/500';
       }
       setResent(data?.resentQuestions);
       setQuestions(groupQuestions(data?.questions));
@@ -102,7 +102,7 @@ export default function Survey() {
       form.setFieldsValue(responses);
     } catch (err) {
       if (err?.response?.status === 500) {
-        navigate('/404');
+        navigate('/500');
       }
       setError('Oops! Something went wrong');
     }
