@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, InputNumber, Radio } from 'antd';
+import { Input, InputNumber, Radio, Select } from 'antd';
 
 export default function InputField({
   type,
@@ -21,9 +21,9 @@ export default function InputField({
     switch (type) {
       case 'NUMBER':
         return (
-          <Input
+          <InputNumber
             placeholder={placeholder || 'Enter Number'}
-            pattern='[0-9]*'
+            controls={false}
             autoComplete='off'
             disabled={disabled}
             defaultValue={defaultValue}
@@ -60,6 +60,15 @@ export default function InputField({
             {...rest}
           />
         );
+      case 'SELECT':
+        return (
+          <Select
+            placeholder={placeholder || 'Select'}
+            disabled={disabled}
+            {...rest}
+          />
+        );
+
       default:
         return (
           <Input placeholder={placeholder} disabled={disabled} {...rest} />

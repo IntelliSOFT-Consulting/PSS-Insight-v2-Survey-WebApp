@@ -92,7 +92,10 @@ export default function Survey() {
   const fetchQuestions = async () => {
     try {
       const data = await getQuestions(surveyId);
-      if (data?.respondentDetails?.status === 'PENDING') {
+      if (
+        data?.respondentDetails?.status === 'PENDING' &&
+        !data?.resentQuestions?.length
+      ) {
         window.location.href = '/500';
       }
       setResent(data?.resentQuestions);
@@ -471,9 +474,19 @@ export default function Survey() {
                                       >
                                         <InputField
                                           label={indicator.name}
-                                          type={indicator.valueType}
+                                          type={
+                                            indicator?.optionSets
+                                              ? 'SELECT'
+                                              : indicator.valueType
+                                          }
                                           size='large'
                                           name={indicator?.id}
+                                          options={indicator?.optionSets?.options?.map(
+                                            item => ({
+                                              label: item?.name,
+                                              value: item?.name,
+                                            })
+                                          )}
                                         />
                                       </Form.Item>
                                     </Card>
