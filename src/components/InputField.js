@@ -45,10 +45,10 @@ export default function InputField({
       case 'BOOLEAN':
         return (
           <Radio.Group
-            options={options}
-            defaultValue={defaultValue}
-            value={value}
-            {...rest}
+          defaultValue={defaultValue}
+          value={value}
+          {...rest}
+          options={options}
           />
         );
       case 'TEXT':
