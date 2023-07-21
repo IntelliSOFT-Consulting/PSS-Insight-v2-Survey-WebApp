@@ -20,3 +20,14 @@ server {
     }
 }
 EOF
+
+# build the docker image
+docker build -t pss-survey -f docker/Dockerfile .
+
+echo "Successfully built the docker image"
+
+# run the docker container
+echo "running the docker container by running the following command:"
+echo "docker run -p 3001:3001 pss-survey"
+
+
