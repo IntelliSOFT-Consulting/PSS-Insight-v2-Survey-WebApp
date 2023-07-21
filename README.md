@@ -21,7 +21,7 @@ Once you have `Docker` installed, follow these steps to build the Docker image f
 1. Clone this repository to your local machine.
 2. Open a terminal (or command prompt) and navigate to the project directory.
 3. Create a .env file at the root directory and add the national instance server url value for this variable ```REACT_APP_API_URL```
-6. Run the following `docker` command to build the Docker image:
+6. Run the following command to build the Docker image:
 
    <pre><div class="bg-black rounded-md mb-4"><div class="p-4 overflow-y-auto"><code class="!whitespace-pre hljs language-bash">./run.sh 
    </code></div></div></pre>
