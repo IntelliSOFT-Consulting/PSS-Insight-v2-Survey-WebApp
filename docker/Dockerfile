@@ -8,6 +8,8 @@ COPY . .
 
 RUN npm run build
 
+ENV REACT_APP_API_URL=${REACT_APP_API_URL}
+
 
 FROM nginx:alpine
 COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf 
