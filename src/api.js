@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://172.104.91.99:7001/api/v1',
+  baseURL: 'https://local.pssinsight.org/api/v1',
 });
 
 export const getSurvey = id => {
