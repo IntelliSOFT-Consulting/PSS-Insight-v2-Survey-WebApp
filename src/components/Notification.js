@@ -38,6 +38,7 @@ export default function Notification({ status, message, onClose, ...props }) {
       maskStyle={{
         backgroundColor: props.darkened ? '#112128' : 'rgba(0,0,0,.5)',
       }}
+      {...props}
     >
       <div className={classes.modal}>
         {status === 'error' ? (

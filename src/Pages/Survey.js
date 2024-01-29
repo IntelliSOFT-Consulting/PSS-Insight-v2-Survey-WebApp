@@ -216,6 +216,19 @@ export default function Survey() {
                   }
                 }}
                 darkened={form.getFieldValue('isSubmit')}
+
+                footer={form.getFieldValue('isSubmit') && saved ? (
+                  <div className='flex justify-end border-t py-2'>
+                    <button
+                      className='bg-success rounded-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-success focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success'
+                      onClick={() => {
+                        window.location.href = '/survey';
+                      }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                ) : null}
               />
               <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
