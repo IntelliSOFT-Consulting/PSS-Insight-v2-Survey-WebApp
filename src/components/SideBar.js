@@ -25,7 +25,7 @@ export default function SideBar({ progress, info, form }) {
       <div className='flex flex-col w-full text-sm px-2'>
         <Tooltip title="To find a specific indicator in the document, use the search function (typically Ctrl+F or Command+F) and enter the name or keyword of the indicator you're looking for.">
           <a
-            href={`${process.env.REACT_APP_REFERENCE_URL}/api/v1/national-template/view-file/${info?.referenceSheet}`}
+            href={`${window.location.origin}/api/v1/national-template/view-file/${info?.referenceSheet}`}
             target='_blank'
             rel='noreferrer'
             className='bg-[#CCE0F1] hover:bg-[#CCE0F1] py-2 px-4 w-full flex justify-center rounded text-primaryDark'
